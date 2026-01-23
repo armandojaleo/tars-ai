@@ -29,3 +29,6 @@ Thumbs.db
 
 # Test files (opcional)
 test-*.html
+
+# Dev tools (scripts de desarrollo)
+dev-tools/

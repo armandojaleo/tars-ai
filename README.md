@@ -6,6 +6,12 @@ Asistente de voz inteligente inspirado en TARS de Interstellar. Habla con él, a
 ![Security](https://img.shields.io/badge/security-A+-green)
 ![License](https://img.shields.io/badge/license-MIT-orange)
 
+## 🌐 Demo en Vivo
+
+**👉 [https://armandojaleo.github.io/tars-ai/](https://armandojaleo.github.io/tars-ai/)**
+
+> **Nota:** Necesitarás una API key gratuita de Groq, OpenAI u otro proveedor compatible. Ver [Inicio Rápido](#-inicio-rápido) más abajo.
+
 ---
 
 ## ✨ Características
@@ -15,35 +21,28 @@ Asistente de voz inteligente inspirado en TARS de Interstellar. Habla con él, a
 - 🎭 **Personalidad ajustable** - Controla sinceridad, humor y sarcasmo
 - 🎨 **ASCII Art** - Visualizaciones temáticas de Interstellar
 - 🔒 **Seguro** - API key encriptada, CSP implementado
-- 📱 **Responsive** - Funciona en móvil y escritorio
+- 📱 **100% Responsive** - Optimizado para móvil, tablet y escritorio
 - 🌐 **Sin backend** - Todo funciona en tu navegador
+- 🎯 **SEO Optimizado** - Metadatos completos y favicon animado
+- ⚡ **PWA Ready** - Instalable como app nativa
 
 ---
 
 ## 🚀 Inicio Rápido
 
-### 1. Obtener API Key (Gratis)
+### 1. Obtener API Key de Groq (Gratis)
 
-**Opción A - Groq (Recomendado):**
 - Ve a https://console.groq.com/
 - Crea cuenta gratis
 - Genera API Key
 
-**Opción B - OpenAI ($5 gratis):**
-- Ve a https://platform.openai.com/
-- Crea cuenta
-- Genera API Key
-
-**Opción C - Together AI ($25 gratis):**
-- Ve a https://api.together.xyz/
-- Crea cuenta
-- Genera API Key
+> **Nota:** Por defecto, TARS está configurado para usar Groq. Si quieres usar OpenAI u otro proveedor, necesitarás modificar `app.js` (ver [Configuración](#-configuración)).
 
 ### 2. Usar TARS
 
 1. Abre `index.html` en tu navegador
 2. Clic en "CONFIGURAR API"
-3. Pega tu API key
+3. Pega tu API key de Groq
 4. ¡Habla con TARS!
 
 ---
@@ -62,23 +61,49 @@ Asistente de voz inteligente inspirado en TARS de Interstellar. Habla con él, a
 
 ## 🔧 Configuración
 
-### Cambiar API (OpenAI, Together, etc.)
+### Configuración Actual
 
-Edita `app.js` línea ~140:
+TARS está configurado para usar **Groq** (gratis y rápido):
 
+```javascript
+const CONFIG = {
+    apiKey: loadApiKey(),
+    apiEndpoint: 'https://api.groq.com/openai/v1/chat/completions',
+    model: 'llama-3.3-70b-versatile',
+    maxTokens: 500
+};
+```
+
+### Cambiar a Otro Proveedor (OpenAI, Together, etc.)
+
+Si quieres usar otro proveedor, edita `app.js` línea ~143:
+
+**Para OpenAI:**
 ```javascript
 const CONFIG = {
     apiKey: loadApiKey(),
     apiEndpoint: 'https://api.openai.com/v1/chat/completions',
     model: 'gpt-3.5-turbo',
-    maxTokens: 150
+    maxTokens: 500
 };
 ```
 
-Y actualiza CSP en `index.html` línea ~11:
+**Para Together AI:**
+```javascript
+const CONFIG = {
+    apiKey: loadApiKey(),
+    apiEndpoint: 'https://api.together.xyz/v1/chat/completions',
+    model: 'meta-llama/Llama-3-70b-chat-hf',
+    maxTokens: 500
+};
+```
+
+Y actualiza CSP en `index.html` (línea ~48):
 
 ```html
 connect-src 'self' https://api.openai.com;
+<!-- o -->
+connect-src 'self' https://api.together.xyz;
 ```
 
 ---
@@ -127,10 +152,13 @@ vercel
 
 ```
 tars-ai/
-├── index.html          # Interfaz principal
-├── app.js              # Lógica y funcionalidad
-├── styles.css          # Estilos
-└── README.md           # Este archivo
+├── index.html              # Interfaz principal
+├── app.js                  # Lógica y funcionalidad
+├── styles.css              # Estilos responsive
+├── favicon.svg             # Favicon animado
+├── site.webmanifest        # Configuración PWA
+├── README.md               # Este archivo
+└── LICENSE                 # Licencia MIT
 ```
 
 ---

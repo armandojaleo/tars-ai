@@ -1065,6 +1065,22 @@ input[type="range"]::-moz-range-thumb {
 @media (max-width: 1024px) {
     .main-panel {
         grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+    }
+
+    .main-panel > .tars-display {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .main-panel > .control-panel {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .main-panel > .console-container {
+        grid-column: 1;
+        grid-row: 3;
     }
 
     .action-buttons {
@@ -1073,26 +1089,282 @@ input[type="range"]::-moz-range-thumb {
 }
 
 @media (max-width: 768px) {
+    body {
+        padding: 5px;
+        overflow-y: auto;
+    }
+
+    .container {
+        height: auto;
+        min-height: calc(100vh - 10px);
+        border-radius: 5px;
+    }
+
     .header {
         flex-direction: column;
-        gap: 15px;
+        gap: 10px;
         text-align: center;
+        padding: 10px 15px;
+    }
+
+    .logo h1 {
+        font-size: 22px;
+        letter-spacing: 2px;
+    }
+
+    .tars-icon {
+        width: 30px;
+        height: 30px;
     }
 
     .system-info {
         flex-wrap: wrap;
         justify-content: center;
+        font-size: 10px;
+        gap: 8px;
+    }
+
+    .operator-info {
+        font-size: 10px;
+    }
+
+    .main-panel {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .tars-display {
+        min-height: 150px;
+    }
+
+    .tars-message {
+        padding: 15px;
+        font-size: 1em;
+        min-height: 80px;
+    }
+
+    .console-container {
+        max-height: 200px;
+    }
+
+    .console {
+        max-height: 150px;
+        font-size: 12px;
+    }
+
+    .control-panel {
+        gap: 10px;
+    }
+
+    .settings-group {
+        padding: 10px;
+    }
+
+    .toggles-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .toggle-item {
+        padding: 8px;
+    }
+
+    .quick-actions {
+        padding: 10px;
+    }
+
+    .quick-actions h3 {
+        font-size: 11px;
+        margin-bottom: 10px;
     }
 
     .action-buttons {
         grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .action-btn {
+        padding: 12px 8px;
+        font-size: 10px;
+        gap: 5px;
+    }
+
+    .action-btn .icon {
+        font-size: 20px;
+    }
+
+    .input-area {
+        padding: 10px 15px;
     }
 
     .input-container {
-        flex-direction: column;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .prompt {
+        font-size: 14px;
+    }
+
+    #userInput {
+        flex: 1 1 100%;
+        min-width: 100%;
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .btn-mic {
+        padding: 8px 12px;
+        font-size: 16px;
+        margin-right: 0;
     }
 
     .btn-send {
+        flex: 1;
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+
+    .api-status {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .btn-config {
         width: 100%;
+        padding: 8px 15px;
+    }
+
+    .modal-content {
+        padding: 25px;
+        width: 95%;
+    }
+
+    .modal-content h2 {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo h1 {
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
+
+    .tars-icon {
+        width: 25px;
+        height: 25px;
+        gap: 2px;
+    }
+
+    .system-info {
+        font-size: 9px;
+        gap: 5px;
+    }
+
+    .tars-message {
+        font-size: 0.9em;
+        padding: 12px;
+    }
+
+    .action-buttons {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+
+    .action-btn {
+        padding: 10px 6px;
+        font-size: 9px;
+    }
+
+    .action-btn .icon {
+        font-size: 18px;
+    }
+
+    .setting-item.compact {
+        padding: 6px 0;
+    }
+
+    .setting-label,
+    .setting-value {
+        font-size: 11px;
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+
+    .modal-info ol {
+        margin-left: 15px;
+        font-size: 12px;
+    }
+}
+
+/* Mejoras táctiles para móviles */
+@media (hover: none) and (pointer: coarse) {
+    .btn-mic,
+    .btn-send,
+    .action-btn,
+    .btn-toggle,
+    .btn-config {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .slider {
+        height: 8px;
+    }
+
+    .slider::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+    }
+
+    .slider::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+    }
+
+    .toggle-checkbox {
+        width: 60px;
+        height: 30px;
+    }
+
+    .toggle-checkbox::before {
+        width: 24px;
+        height: 24px;
+    }
+
+    .toggle-checkbox:checked::before {
+        left: 30px;
+    }
+}
+
+/* Landscape móvil */
+@media (max-width: 768px) and (orientation: landscape) {
+    .container {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .main-panel {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .main-panel > .tars-display {
+        grid-column: 1 / 3;
+        grid-row: 1;
+    }
+
+    .main-panel > .control-panel {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .main-panel > .console-container {
+        grid-column: 2;
+        grid-row: 2;
     }
 }
