@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 🔒 SEGURIDAD: Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self'; 
+                   script-src 'self' 'unsafe-inline'; 
+                   style-src 'self' 'unsafe-inline';
+                   connect-src 'self' https://api.groq.com;
+                   img-src 'self' data:;
+                   font-src 'self';
+                   media-src 'self';
+                   object-src 'none';
+                   base-uri 'self';
+                   form-action 'self';
+                   frame-ancestors 'none';">
+    
+    <title>TARS - Terminal de Asistencia Robótica Sincera</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header con información del sistema -->
+        <div class="header">
+            <div class="logo">
+                <div class="tars-icon">
+                    <div class="cube"></div>
+                    <div class="cube"></div>
+                    <div class="cube"></div>
+                    <div class="cube"></div>
+                </div>
+                <h1>TARS v2.0</h1>
+            </div>
+            <div class="system-info">
+                <span id="datetime"></span>
+                <span class="separator">|</span>
+                <span>SISTEMA: OPERATIVO</span>
+                <span class="separator">|</span>
+                <span class="status-indicator">●</span>
+                <span class="separator">|</span>
+                <span class="operator-info">
+                    OPERADOR: <span id="userNameHeader">DESCONOCIDO</span>
+                    <button id="forgetUserBtnHeader" class="btn-forget-header" title="Olvidar nombre" style="display:none;">🔄</button>
+                </span>
+            </div>
+        </div>
+
+        <!-- Panel de control principal -->
+        <div class="main-panel">
+            <!-- TARS Display - Terminal output -->
+            <div class="tars-display">
+                <div class="tars-message" id="tarsLastMessage">
+                    <span class="tars-thinking">[ TARS READY ] Awaiting input...</span>
+                </div>
+            </div>
+
+            <!-- Console output completo (historial + logs) -->
+            <div class="console-container collapsed">
+                <div class="console-header">
+                    <span>🔧 REGISTRO COMPLETO</span>
+                    <div class="console-controls">
+                        <button id="toggleDebugConsole" class="btn-toggle" title="Mostrar/ocultar registro">▼</button>
+                        <button id="toggleHistory" class="btn-toggle" title="Mostrar/ocultar historial">📜</button>
+                        <button id="clearConsole" class="btn-clear">LIMPIAR</button>
+                    </div>
+                </div>
+                <div class="console" id="console">
+                    <div class="message system-msg">
+                        <span class="timestamp">[INICIO]</span>
+                        <span class="text">Sistema TARS iniciado. Configuración de sinceridad al 90%.</span>
+                    </div>
+                    <div class="message system-msg">
+                        <span class="timestamp">[INFO]</span>
+                        <span class="text">TARS escuchando. Habla naturalmente, responderé cuando tenga sentido.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control panel -->
+            <div class="control-panel">
+                <!-- Toggles primero -->
+                <div class="toggles-row">
+                    <div class="toggle-item">
+                        <label for="speechToggle" class="toggle-label">
+                            <span class="toggle-icon">🔊</span>
+                            <input type="checkbox" id="speechToggle" checked class="toggle-checkbox">
+                            <span class="toggle-text" id="speechStatus">ACTIVADA</span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <label for="proactiveToggle" class="toggle-label">
+                            <span class="toggle-icon">🤖</span>
+                            <input type="checkbox" id="proactiveToggle" checked class="toggle-checkbox">
+                            <span class="toggle-text" id="proactiveStatus">ACTIVADO</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Sliders después -->
+                <div class="settings-group compact">
+                    <div class="setting-item compact">
+                        <label for="honestySlider">
+                            <span class="setting-label">SINCERIDAD</span>
+                            <span class="setting-value" id="honestyValue">90%</span>
+                        </label>
+                        <input type="range" id="honestySlider" min="0" max="100" value="90" class="slider">
+                    </div>
+
+                    <div class="setting-item compact">
+                        <label for="humorSlider">
+                            <span class="setting-label">HUMOR</span>
+                            <span class="setting-value" id="humorValue">75%</span>
+                        </label>
+                        <input type="range" id="humorSlider" min="0" max="100" value="75" class="slider">
+                    </div>
+
+                    <div class="setting-item compact">
+                        <label for="sarcasmSlider">
+                            <span class="setting-label">SARCASMO</span>
+                            <span class="setting-value" id="sarcasmValue">80%</span>
+                        </label>
+                        <input type="range" id="sarcasmSlider" min="0" max="100" value="80" class="slider">
+                    </div>
+
+                    <div class="setting-item compact">
+                        <label for="speedSlider">
+                            <span class="setting-label">VELOCIDAD</span>
+                            <span class="setting-value" id="speedValue">Normal</span>
+                        </label>
+                        <input type="range" id="speedSlider" min="1" max="3" value="2" step="1" class="slider">
+                    </div>
+                </div>
+
+                <!-- Consultas rápidas -->
+                <div class="quick-actions">
+                    <h3>CONSULTAS RÁPIDAS</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn" data-query="¿Van a caer meteoritos hoy?">
+                            <span class="icon">☄️</span>
+                            <span>Meteoritos</span>
+                        </button>
+                        <button class="action-btn" data-query="¿Va a llover hoy?">
+                            <span class="icon">🌧️</span>
+                            <span>Lluvia</span>
+                        </button>
+                        <button class="action-btn" data-query="¿Cuál es el estado de la misión?">
+                            <span class="icon">🚀</span>
+                            <span>Misión</span>
+                        </button>
+                        <button class="action-btn" data-query="Dame un análisis de supervivencia">
+                            <span class="icon">📊</span>
+                            <span>Análisis</span>
+                        </button>
+                        <button class="action-btn" data-query="¿Qué probabilidad hay de éxito?">
+                            <span class="icon">🎯</span>
+                            <span>Probabilidad</span>
+                        </button>
+                        <button class="action-btn" data-query="Cuéntame un chiste sobre el espacio">
+                            <span class="icon">😄</span>
+                            <span>Chiste</span>
+                        </button>
+                        <button class="action-btn" id="showLogBtn">
+                            <span class="icon">📋</span>
+                            <span>Logs</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input area -->
+        <div class="input-area">
+            <div class="input-container">
+                <span class="prompt">TARS&gt;</span>
+                <input type="text" id="userInput" placeholder="Escribe o habla tu consulta..." autocomplete="off">
+                <button id="micBtn" class="btn-mic" title="Hablar por micrófono">🎤</button>
+                <button id="sendBtn" class="btn-send">ENVIAR</button>
+            </div>
+            <div class="api-status">
+                <span id="apiStatus" class="status-disconnected">● API NO CONFIGURADA</span>
+                <button id="configBtn" class="btn-config">CONFIGURAR API</button>
+                <span id="listeningMode" class="listening-mode" style="display:none;">👂 Escucha inteligente</span>
+            </div>
+            
+            <!-- Uso de API y reset -->
+            <div class="api-usage-bar">
+                <div class="usage-header">
+                    <span class="usage-label">USO HOY:</span>
+                    <span class="usage-count" id="apiUsageCount">0/100</span>
+                    <button id="resetCounterBtn" class="btn-reset-small" title="Resetear contador">🔄</button>
+                </div>
+                <div class="usage-progress">
+                    <div class="usage-fill" id="apiUsageBar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de configuración -->
+    <div id="configModal" class="modal">
+        <div class="modal-content">
+            <h2>Configuración de API Groq</h2>
+            <p>Ingresa tu clave API de Groq:</p>
+            <input type="password" id="apiKeyInput" placeholder="gsk_..." class="api-input">
+            <div class="modal-buttons">
+                <button id="saveApiKey" class="btn-primary">GUARDAR</button>
+                <button id="cancelConfig" class="btn-secondary">CANCELAR</button>
+            </div>
+            <div class="modal-info">
+                <p><strong>¿Cómo obtener tu API Key?</strong></p>
+                <ol>
+                    <li>Visita <a href="https://console.groq.com/" target="_blank">console.groq.com</a></li>
+                    <li>Inicia sesión o crea una cuenta</li>
+                    <li>Ve a "API Keys" y genera una nueva clave</li>
+                    <li>Copia y pega la clave aquí</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
