@@ -188,6 +188,87 @@ Las contribuciones son bienvenidas!
 
 MIT License - Usa, modifica y distribuye libremente.
 
+Ver archivo [LICENSE](LICENSE) para más detalles.
+
+---
+
+## ⚖️ Aspectos Legales
+
+### Propiedad Intelectual
+
+**TARS AI** es un proyecto de código abierto inspirado en el personaje TARS de la película Interstellar (2014).
+
+- ✅ **Código original**: MIT License (libre uso)
+- ⚠️ **Nombre "TARS"**: Marca registrada de Warner Bros. Entertainment Inc.
+- ⚠️ **Concepto Interstellar**: Propiedad de Warner Bros. y Paramount Pictures
+
+**Disclaimer**: Este proyecto es una obra de fan art educativa y no comercial. No está afiliado, patrocinado ni respaldado por Warner Bros., Paramount Pictures o Christopher Nolan.
+
+### Uso de APIs de Terceros
+
+Este proyecto utiliza APIs de terceros (Groq, OpenAI, etc.) que tienen sus propios términos de servicio:
+
+- 🔑 **API Keys**: Son responsabilidad del usuario
+- 💰 **Costos**: El usuario es responsable de los cargos de API
+- 📋 **Términos**: Debes aceptar los términos de servicio de cada proveedor
+- 🔒 **Privacidad**: Las conversaciones se envían a los servidores de la API
+
+**Enlaces importantes:**
+- [Términos de Groq](https://groq.com/terms/)
+- [Términos de OpenAI](https://openai.com/policies/terms-of-use)
+- [Términos de Together AI](https://www.together.ai/terms)
+
+### Privacidad y Datos
+
+- ✅ **Sin backend propio**: No almacenamos tus datos en servidores
+- ✅ **LocalStorage**: Datos guardados solo en tu navegador
+- ✅ **API Key encriptada**: Protección local de tu clave
+- ⚠️ **Conversaciones**: Se envían a la API elegida (Groq/OpenAI/etc.)
+- ⚠️ **Voz**: Procesada por Web Speech API del navegador
+
+**Recomendación**: No compartas información sensible o personal con TARS.
+
+### Limitación de Responsabilidad
+
+**ESTE SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO.**
+
+El autor NO se hace responsable de:
+- ❌ Costos de API incurridos por el usuario
+- ❌ Pérdida de datos o conversaciones
+- ❌ Mal funcionamiento del software
+- ❌ Violación de términos de servicio de terceros
+- ❌ Uso indebido del software
+- ❌ Problemas de privacidad o seguridad
+
+**Uso bajo tu propio riesgo.**
+
+### Cumplimiento Legal
+
+Al usar este software, aceptas:
+
+1. ✅ Cumplir con las leyes locales de tu jurisdicción
+2. ✅ Respetar los términos de servicio de las APIs
+3. ✅ No usar el software para fines ilegales
+4. ✅ No infringir derechos de propiedad intelectual
+5. ✅ Ser responsable de tus propias acciones
+
+### Para Uso Comercial
+
+Si deseas usar TARS AI comercialmente:
+
+1. 📧 Contacta al autor: armando@armandojaleo.com
+2. ⚖️ Considera las implicaciones de marca registrada
+3. 📋 Asegúrate de cumplir con términos de APIs comerciales
+4. 💼 Consulta con un abogado si es necesario
+
+### Contribuciones
+
+Al contribuir a este proyecto:
+
+- ✅ Aceptas que tu código se licencie bajo MIT
+- ✅ Garantizas que tienes derecho a contribuir
+- ✅ Aceptas que tu contribución sea pública
+
 ---
 
 ## 👨‍💻 Autor
