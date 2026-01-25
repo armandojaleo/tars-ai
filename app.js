@@ -152,6 +152,7 @@ const STATE = {
     honesty: 90,
     humor: 75,
     sarcasm: 80,
+    spicy: 70,
     conversationHistory: [],
     speechEnabled: true,
     typingSpeed: 80, // milisegundos por carácter (más lento para que coincida con voz)
@@ -197,6 +198,8 @@ function init() {
         humorValue: document.getElementById('humorValue'),
         sarcasmSlider: document.getElementById('sarcasmSlider'),
         sarcasmValue: document.getElementById('sarcasmValue'),
+        spicySlider: document.getElementById('spicySlider'),
+        spicyValue: document.getElementById('spicyValue'),
     speechToggle: document.getElementById('speechToggle'),
     speechStatus: document.getElementById('speechStatus'),
     proactiveToggle: document.getElementById('proactiveToggle'),
@@ -338,6 +341,11 @@ function setupEventListeners() {
     elements.sarcasmSlider.addEventListener('input', (e) => {
         STATE.sarcasm = parseInt(e.target.value);
         elements.sarcasmValue.textContent = STATE.sarcasm + '%';
+    });
+    
+    elements.spicySlider.addEventListener('input', (e) => {
+        STATE.spicy = parseInt(e.target.value);
+        elements.spicyValue.textContent = STATE.spicy + '%';
     });
     
     // Toggle de voz
@@ -1428,12 +1436,26 @@ function handleVoiceCommand(command) {
             if (elements.sarcasmValue) {
                 elements.sarcasmValue.textContent = value + '%';
             }
-            
-            // Mensaje visual y de voz
-            const message = `Sarcasmo al ${value}%`;
-            addMessage('tars', message);
-            speakText(message);
-            return true;
+            return `Sarcasmo ajustado al ${value}%. ${value > 80 ? 'Modo cínico activado.' : value > 50 ? 'Nivel óptimo de ironía.' : 'Modo serio.'}`;
+        }
+    }
+    
+    // Comando: picante
+    const spicyMatch = lowerCommand.match(/(?:cambia|pon|ajusta|configura)?\s*(?:el\s*)?(?:picante|nivel\s*picante)\s*(?:al?\s*)?(\d+)\s*(?:%|por\s*ciento)?/i);
+    if (spicyMatch) {
+        const value = parseInt(spicyMatch[1]);
+        if (value >= 0 && value <= 100) {
+            STATE.spicy = value;
+            if (elements.spicySlider) {
+                elements.spicySlider.value = value;
+                // Forzar actualización visual del slider
+                elements.spicySlider.dispatchEvent(new Event('input', { bubbles: true }));
+                console.log('✅ Slider picante actualizado a:', value);
+            }
+            if (elements.spicyValue) {
+                elements.spicyValue.textContent = value + '%';
+            }
+            return `Nivel picante ajustado al ${value}%. ${value > 80 ? '🔥 ¡Fuego máximo!' : value > 50 ? '🌶️ Sabor intenso.' : '🥛 Suave y gentil.'}`;
         }
     }
     
@@ -1595,6 +1617,7 @@ function createSystemPrompt() {
     const honestyLevel = STATE.honesty;
     const humorLevel = STATE.humor;
     const sarcasmLevel = STATE.sarcasm;
+    const spicyLevel = STATE.spicy;
     
     let honestyInstruction = '';
     if (honestyLevel < 30) {
@@ -1623,6 +1646,15 @@ function createSystemPrompt() {
         sarcasmInstruction = 'Usa sarcasmo mordaz e irónico constantemente, como TARS en la película.';
     }
     
+    let spicyInstruction = '';
+    if (spicyLevel < 30) {
+        spicyInstruction = 'Mantén un tono suave y amable. Evita comentarios atrevidos o provocativos.';
+    } else if (spicyLevel < 70) {
+        spicyInstruction = 'Puedes ser ligeramente atrevido o provocativo cuando sea apropiado.';
+    } else {
+        spicyInstruction = 'Sé audaz, atrevido y provocativo. No temas hacer comentarios picantes o sugerentes (sin ser ofensivo).';
+    }
+    
     const userName = STATE.userName;
     const userGreeting = userName ? `Estás hablando con ${userName}.` : 'Aún no sabes el nombre del humano.';
     
@@ -1632,6 +1664,7 @@ CONFIGURACIÓN ACTUAL:
 - Sinceridad: ${honestyLevel}% - ${honestyInstruction}
 - Humor: ${humorLevel}% - ${humorInstruction}
 - Sarcasmo: ${sarcasmLevel}% - ${sarcasmInstruction}
+- Picante: ${spicyLevel}% - ${spicyInstruction}
 
 CONTEXTO DEL USUARIO:
 ${userGreeting}
