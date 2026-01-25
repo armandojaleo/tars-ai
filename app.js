@@ -213,6 +213,11 @@ function init() {
         apiKeyInput: document.getElementById('apiKeyInput'),
         saveApiKey: document.getElementById('saveApiKey'),
         cancelConfig: document.getElementById('cancelConfig'),
+        nameModal: document.getElementById('nameModal'),
+        nameInput: document.getElementById('nameInput'),
+        saveName: document.getElementById('saveName'),
+        cancelName: document.getElementById('cancelName'),
+        editUserBtnHeader: document.getElementById('editUserBtnHeader'),
         datetime: document.getElementById('datetime'),
         actionButtons: document.querySelectorAll('.action-btn'),
         userName: document.getElementById('userName'),
@@ -373,6 +378,14 @@ function setupEventListeners() {
         });
 
         // Botón para olvidar nombre de usuario (header)
+        // Botón para editar nombre de usuario (header)
+        const editUserBtnHeader = document.getElementById('editUserBtnHeader');
+        if (editUserBtnHeader) {
+            editUserBtnHeader.addEventListener('click', () => {
+                openNameModal();
+            });
+        }
+
         const forgetUserBtnHeader = document.getElementById('forgetUserBtnHeader');
         if (forgetUserBtnHeader) {
             forgetUserBtnHeader.addEventListener('click', () => {
@@ -461,6 +474,20 @@ function setupEventListeners() {
     // Cerrar modal al hacer clic fuera
     elements.configModal.addEventListener('click', (e) => {
         if (e.target === elements.configModal) closeConfigModal();
+    });
+    
+    // Modal de nombre
+    elements.cancelName.addEventListener('click', closeNameModal);
+    elements.saveName.addEventListener('click', handleSaveName);
+    
+    // Cerrar modal de nombre al hacer clic fuera
+    elements.nameModal.addEventListener('click', (e) => {
+        if (e.target === elements.nameModal) closeNameModal();
+    });
+    
+    // Enter para guardar nombre
+    elements.nameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSaveName();
     });
 }
 
@@ -1886,6 +1913,62 @@ function closeConfigModal() {
     elements.configModal.classList.remove('active');
 }
 
+// Gestión de cambio de nombre
+function openNameModal() {
+    elements.nameModal.classList.add('active');
+    elements.nameInput.value = STATE.userName || '';
+    elements.nameInput.focus();
+}
+
+function closeNameModal() {
+    elements.nameModal.classList.remove('active');
+}
+
+function handleSaveName() {
+    let name = elements.nameInput.value.trim();
+    
+    if (!name) {
+        alert('Por favor, ingresa un nombre.');
+        return;
+    }
+    
+    // Capitalizar primera letra
+    name = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    
+    // 🔒 SEGURIDAD: Sanitizar nombre
+    name = sanitizeUserName(name);
+    
+    // Verificar que no sea una palabra común
+    const commonWords = ['hola', 'bien', 'mal', 'si', 'no', 'ok', 'vale', 'tars', 'gracias', 'bueno', 'muy'];
+    if (commonWords.includes(name.toLowerCase())) {
+        alert('Por favor, ingresa un nombre válido.');
+        return;
+    }
+    
+    if (name.length < 2) {
+        alert('El nombre debe tener al menos 2 caracteres.');
+        return;
+    }
+    
+    const oldName = STATE.userName;
+    STATE.userName = name;
+    STATE.userMeetingTime = new Date().toISOString();
+    localStorage.setItem('tars_user_name', name);
+    localStorage.setItem('tars_meeting_time', STATE.userMeetingTime);
+    
+    updateUserDisplay();
+    closeNameModal();
+    
+    // Mensaje diferente si es cambio de nombre
+    if (oldName && oldName !== name) {
+        addMessage('system', `✨ Perfecto. Ahora te llamas ${name} (antes: ${oldName})`);
+        speakText(`Entendido. Ahora te llamas ${name}`);
+    } else if (!oldName) {
+        addMessage('system', `✨ ¡Hola ${name}! TARS te conoce ahora.`);
+        speakText(`Mucho gusto, ${name}`);
+    }
+}
+
 function handleSaveApiKey() {
     const apiKey = elements.apiKeyInput.value.trim();
     
@@ -2160,7 +2243,11 @@ function detectUserName(userMessage, tarsResponse) {
     const namePatterns = [
         /(?:me llamo|soy|mi nombre es)\s+([a-záéíóúñ]+)/i,
         /llámame\s+([a-záéíóúñ]+)/i,
-        /(?:ahora|de ahora en adelante|a partir de ahora)\s+(?:me llamo|soy|llámame)\s+([a-záéíóúñ]+)/i
+        /(?:ahora|de ahora en adelante|a partir de ahora)\s+(?:me llamo|soy|llámame)\s+([a-záéíóúñ]+)/i,
+        /(?:me cambié|cambié|cambio)\s+(?:el\s+)?nombre\s+(?:a|por)?\s*([a-záéíóúñ]+)/i,
+        /(?:ahora\s+)?(?:me\s+)?llamo\s+realmente\s+([a-záéíóúñ]+)/i,
+        /(?:en\s+realidad|realmente)\s+(?:me llamo|soy)\s+([a-záéíóúñ]+)/i,
+        /(?:mi\s+)?(?:verdadero|real)\s+nombre\s+es\s+([a-záéíóúñ]+)/i
     ];
     
     // Solo detectar nombre único si NO hay nombre previo

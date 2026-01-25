@@ -125,6 +125,23 @@ body {
     font-weight: bold;
 }
 
+.btn-edit-header {
+    background: transparent;
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    padding: 0px 4px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 10px;
+    transition: all 0.2s;
+    margin-left: 4px;
+}
+
+.btn-edit-header:hover {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+}
+
 .btn-forget-header {
     background: transparent;
     border: 1px solid var(--accent-warning);
@@ -134,6 +151,7 @@ body {
     cursor: pointer;
     font-size: 10px;
     transition: all 0.2s;
+    margin-left: 4px;
 }
 
 .btn-forget-header:hover {

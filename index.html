@@ -79,6 +79,7 @@
                 <span class="separator">|</span>
                 <span class="operator-info">
                     OPERADOR: <span id="userNameHeader">DESCONOCIDO</span>
+                    <button id="editUserBtnHeader" class="btn-edit-header" title="Cambiar nombre">✏️</button>
                     <button id="forgetUserBtnHeader" class="btn-forget-header" title="Olvidar nombre" style="display:none;">🔄</button>
                 </span>
             </div>
@@ -261,6 +262,23 @@
                     <li>Ve a "API Keys" y genera una nueva clave</li>
                     <li>Copia y pega la clave aquí</li>
                 </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de cambio de nombre -->
+    <div id="nameModal" class="modal">
+        <div class="modal-content">
+            <h2>Cambiar Nombre</h2>
+            <p>¿Cómo quieres que TARS te llame?</p>
+            <input type="text" id="nameInput" placeholder="Tu nombre..." class="api-input" maxlength="20">
+            <div class="modal-buttons">
+                <button id="saveName" class="btn-primary">GUARDAR</button>
+                <button id="cancelName" class="btn-secondary">CANCELAR</button>
+            </div>
+            <div class="modal-info">
+                <p><strong>💡 Consejo:</strong></p>
+                <p>También puedes decir: "Me llamo [nombre]", "Ahora soy [nombre]", o "Me cambié el nombre a [nombre]"</p>
             </div>
         </div>
     </div>
