@@ -498,7 +498,8 @@ function handleSendMessage() {
     if (!message) return;
     
     if (!CONFIG.apiKey || CONFIG.apiKey.length < 10) {
-        addMessage('error', 'ERROR: No se ha configurado la API key. Haz clic en "CONFIGURAR API".');
+        addMessage('error', '🔑 ERROR: No hay código de acceso configurado. Necesito una API key de Groq para funcionar.');
+        addMessage('system', '💡 Haz clic en "CONFIGURAR API" para ingresar tu clave.');
         openConfigModal();
         return;
     }
@@ -1801,11 +1802,11 @@ async function sendToGroq(userMessage, typingId, retryCount = 0) {
             console.error('Error de API:', errorData);
             
             if (response.status === 401) {
-                errorMsg = 'API key inválida o expirada. Configura una nueva.';
+                errorMsg = 'API key inválida';
             } else if (response.status === 429) {
-                errorMsg = 'Límite de uso excedido. Espera unos minutos.';
+                errorMsg = 'Límite de uso excedido';
             } else if (response.status === 500) {
-                errorMsg = 'Error del servidor de Groq. Intenta de nuevo.';
+                errorMsg = 'Error del servidor de Groq';
             } else {
                 errorMsg = errorData.error?.message || `Error HTTP ${response.status}`;
             }
@@ -1876,20 +1877,20 @@ async function sendToGroq(userMessage, typingId, retryCount = 0) {
         let solutionMsg = '';
         
         if (error.name === 'AbortError') {
-            errorMsg = 'Timeout: Sin respuesta del servidor.';
-            solutionMsg = 'Groq no responde. Verifica tu conexión.';
+            errorMsg = '⚠️ TIMEOUT: Sin respuesta del servidor';
+            solutionMsg = '📡 Revisa la antena. No hay comunicación con Groq. Verifica tu conexión.';
         } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-            errorMsg = 'Error de red.';
-            solutionMsg = 'Verifica tu conexión a internet.';
+            errorMsg = '⚠️ ERROR DE RED';
+            solutionMsg = '📡 Revisa la antena. No hay comunicación. Verifica tu conexión a internet.';
         } else if (error.message.includes('API key inválida')) {
-            errorMsg = 'API key inválida.';
-            solutionMsg = 'Configura una API key válida.';
+            errorMsg = '⚠️ CREDENCIALES INVÁLIDAS';
+            solutionMsg = '🔑 Código de acceso rechazado. Configura una API key válida de Groq.';
         } else if (error.message.includes('Límite de uso')) {
-            errorMsg = 'Límite excedido.';
-            solutionMsg = 'Espera unos minutos.';
+            errorMsg = '⚠️ LÍMITE EXCEDIDO';
+            solutionMsg = '⏳ Demasiadas transmisiones. Espera unos minutos antes de reintentar.';
         } else {
             errorMsg = error.message;
-            solutionMsg = 'Error desconocido. Abre consola (F12).';
+            solutionMsg = '❌ Fallo del sistema. Diagnóstico: Abre consola (F12) para más detalles.';
         }
         
         updateMessage(typingId, `ERROR: ${errorMsg}`);
