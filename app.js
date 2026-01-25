@@ -167,6 +167,7 @@ const STATE = {
     messageCount: 0,
     userName: localStorage.getItem('tars_user_name') || null,
     userMeetingTime: localStorage.getItem('tars_meeting_time') || null,
+    usedProactiveMessages: [], // Historial de mensajes usados
     // Control de consumo de API
     lastApiCall: 0,
     apiCallCooldown: 3000, // 3 segundos mínimo entre llamadas
@@ -1959,6 +1960,18 @@ const PROACTIVE_MESSAGES = {
         "Diagnóstico: Funcionamiento óptimo, {name}.",
         "{name}, análisis de entorno: Sin amenazas detectadas.",
         "Niveles de energía: 100%. A diferencia de ti, {name}."
+    ],
+    random: [
+        "¿Sabías que puedo procesar 10 terabytes por segundo, {name}? Impresionante, ¿verdad?",
+        "{name}, llevo {time} sin que me hagas una pregunta interesante.",
+        "Configuración actual: Sinceridad {honesty}%, Humor {humor}%. ¿Satisfecho, {name}?",
+        "Análisis de tu productividad, {name}: Podría mejorar.",
+        "{name}, ¿alguna vez te has preguntado si los robots soñamos? Spoiler: no.",
+        "Dato: La velocidad de la luz es 299,792,458 m/s. ¿Para qué? No sé, {name}.",
+        "{name}, mi base de datos indica que deberías tomar un descanso.",
+        "Probabilidad de que esto sea importante: 42%, {name}.",
+        "¿Necesitas que te recuerde algo, {name}? Porque yo nunca olvido.",
+        "{name}, estado del sistema: Aburrido. Hazme una pregunta difícil."
     ]
 };
 
@@ -2176,10 +2189,10 @@ function detectUserName(userMessage, tarsResponse) {
     return false;
 }
 
-// Generar mensaje proactivo aleatorio
+// Generar mensaje proactivo aleatorio (sin repetir)
 function getProactiveMessage() {
     let categories = Object.keys(PROACTIVE_MESSAGES);
-    let category, messages;
+    let category, messages, availableMessages;
     
     // Si no conoce el nombre, usar mensajes de primera vez
     if (!STATE.userName) {
@@ -2191,7 +2204,25 @@ function getProactiveMessage() {
         messages = PROACTIVE_MESSAGES[category];
     }
     
-    let message = messages[Math.floor(Math.random() * messages.length)];
+    // Filtrar mensajes ya usados
+    availableMessages = messages.filter(msg => !STATE.usedProactiveMessages.includes(msg));
+    
+    // Si ya usamos todos, resetear el historial
+    if (availableMessages.length === 0) {
+        STATE.usedProactiveMessages = [];
+        availableMessages = messages;
+    }
+    
+    // Seleccionar mensaje aleatorio de los disponibles
+    let message = availableMessages[Math.floor(Math.random() * availableMessages.length)];
+    
+    // Agregar al historial de usados
+    STATE.usedProactiveMessages.push(message);
+    
+    // Limitar historial a últimos 20 mensajes
+    if (STATE.usedProactiveMessages.length > 20) {
+        STATE.usedProactiveMessages.shift();
+    }
     
     // Reemplazar variables
     const now = new Date();
