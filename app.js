@@ -1283,7 +1283,9 @@ function initSpeechRecognition() {
                           lowerTranscript.match(/^(qué|cómo|cuándo|dónde|por qué|quién|cuál|puedes|podrías|sabes|tienes|hay|será|va a)/i);
         const isCommand = lowerTranscript.match(/^(haz|hazme|dime|cuéntame|muestra|calcula|analiza|dame|explica|búsca|encuentra)/i);
         const isConversation = lowerTranscript.match(/(creo que|pienso que|me pregunto|necesito|quiero|tengo que|estoy)/i);
-        const isGreeting = lowerTranscript.match(/^(hola|hey|oye|ei|ey|buenos días|buenas tardes|buenas noches|qué tal|qué pasa|saludos|holi|buenas|wenas)/i);
+        // Saludos pueden estar al inicio o en cualquier parte si menciona a TARS
+        const isGreeting = lowerTranscript.match(/^(hola|hey|oye|ei|ey|buenos días|buenas tardes|buenas noches|qué tal|qué pasa|saludos|holi|buenas|wenas)/i) ||
+                          (isTarsCall && lowerTranscript.match(/(hola|hey|oye|ei|ey|qué tal|qué pasa|saludos|buenas|wenas)/i));
         const isLongEnough = lowerTranscript.length > 12; // Frases con contenido sustancial
         
         // Responde si tiene sentido conversacional
