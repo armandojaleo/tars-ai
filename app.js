@@ -100,7 +100,7 @@ function saveApiKey(apiKey) {
     
     const encrypted = encryptApiKey(apiKey);
     localStorage.setItem('groq_api_key_enc', encrypted);
-    console.log('🔒 API key guardada de forma segura (encriptada)');
+    dlog('🔒 API key ofuscada guardada en localStorage');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -137,6 +137,12 @@ function sanitizeText(text) {
 
 // ═══════════════════════════════════════════════════════════════
 
+// Flag de depuración: activa los logs informativos en consola
+const DEBUG = false;
+function dlog(...args) {
+    if (DEBUG) console.log(...args);
+}
+
 // Configuración y estado global
 const CONFIG = {
     apiKey: loadApiKey(),
@@ -144,7 +150,7 @@ const CONFIG = {
     // Modelos disponibles (ordenados de más rápido/simple a más potente):
     // 'llama-3.1-8b-instant'    - MÁS RÁPIDO, menos tokens, respuestas simples
     // 'llama-3.3-70b-versatile' - MÁS INTELIGENTE, más tokens, respuestas complejas
-    model: 'llama-3.1-8b-instant',  // Cambiado a modelo más rápido y económico
+    model: 'llama-3.3-70b-versatile',  // llama-3.1-8b-instant fue retirado por Groq
     maxTokens: 150 // Respuestas MUY cortas
 };
 
@@ -234,19 +240,19 @@ function init() {
     // Cargar voces disponibles
     window.speechSynthesis.onvoiceschanged = () => {
         const voices = window.speechSynthesis.getVoices();
-        console.log(`🎙️ ${voices.length} voces cargadas`);
+        dlog(`🎙️ ${voices.length} voces cargadas`);
     };
     
     // Forzar carga inicial de voces
     setTimeout(() => {
         const voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
-            console.log(`✅ Voces disponibles: ${voices.length}`);
+            dlog(`✅ Voces disponibles: ${voices.length}`);
         } else {
             console.warn('⚠️ No se cargaron voces. Intentando de nuevo...');
             setTimeout(() => {
                 const v = window.speechSynthesis.getVoices();
-                console.log(`🔄 Segundo intento: ${v.length} voces`);
+                dlog(`🔄 Segundo intento: ${v.length} voces`);
             }, 500);
         }
     }, 100);
@@ -421,11 +427,11 @@ function setupEventListeners() {
     
     // Velocidad de escritura
     if (elements.speedSlider) {
-        console.log('Speed slider encontrado:', elements.speedSlider);
+        dlog('Speed slider encontrado:', elements.speedSlider);
         
         // Usar 'change' además de 'input' para mayor compatibilidad
         const handleSpeedChange = (e) => {
-            console.log('Speed slider cambiado a:', e.target.value);
+            dlog('Speed slider cambiado a:', e.target.value);
             const speed = parseInt(e.target.value);
             const speeds = {
                 1: { ms: 120, label: 'Lenta' },
@@ -435,13 +441,13 @@ function setupEventListeners() {
             
             STATE.typingSpeed = speeds[speed].ms;
             elements.speedValue.textContent = speeds[speed].label;
-            console.log('Velocidad actualizada a:', speeds[speed].label, speeds[speed].ms + 'ms');
+            dlog('Velocidad actualizada a:', speeds[speed].label, speeds[speed].ms + 'ms');
         };
         
         elements.speedSlider.addEventListener('input', handleSpeedChange);
         elements.speedSlider.addEventListener('change', handleSpeedChange);
         elements.speedSlider.addEventListener('mousedown', (e) => {
-            console.log('Click en speed slider');
+            dlog('Click en speed slider');
         });
     } else {
         console.error('Speed slider NO encontrado');
@@ -514,7 +520,7 @@ function handleSendMessage() {
         return;
     }
     
-    console.log('📤 Enviando mensaje:', message);
+    dlog('📤 Enviando mensaje:', message);
     
     // Registrar llamada a la API
     registerApiCall();
@@ -909,7 +915,6 @@ async function typewriterEffect(id, text) {
     textSpan.classList.remove('typing-indicator');
     textSpan.textContent = '';
     
-    // console.log('Iniciando typewriter para:', text.substring(0, 50) + '...');
     
     // Asegurar que el mensaje esté visible
     messageDiv.style.display = 'flex';
@@ -919,7 +924,7 @@ async function typewriterEffect(id, text) {
     for (let i = 0; i < text.length; i++) {
         // Verificar si el elemento todavía existe (puede haberse limpiado la consola)
         if (!document.getElementById(id)) {
-            console.log('Typewriter cancelado: elemento eliminado');
+            dlog('Typewriter cancelado: elemento eliminado');
             return;
         }
         
@@ -941,7 +946,6 @@ async function typewriterEffect(id, text) {
         await new Promise(resolve => setTimeout(resolve, STATE.typingSpeed));
     }
     
-    // console.log('Typewriter completado');
 }
 
 // Sonido de tecleo tipo TARS (beep robótico)
@@ -997,11 +1001,11 @@ function detectLanguage(text) {
 
 // Síntesis de voz para TARS (más robótica y más lenta)
 function speakText(text) {
-    console.log('🔊 speakText() llamada con:', text);
-    console.log('🔊 STATE.speechEnabled:', STATE.speechEnabled);
+    dlog('🔊 speakText() llamada con:', text);
+    dlog('🔊 STATE.speechEnabled:', STATE.speechEnabled);
     
     if (!STATE.speechEnabled) {
-        console.log('⚠️ Voz desactivada');
+        dlog('⚠️ Voz desactivada');
         return;
     }
     
@@ -1017,7 +1021,6 @@ function speakText(text) {
     
     // Detectar idioma del texto
     const detectedLang = detectLanguage(text);
-    // console.log('🌍 Idioma detectado:', detectedLang === 'en' ? 'Inglés' : 'Español');
     
     // Obtener voces disponibles
     const voices = window.speechSynthesis.getVoices();
@@ -1054,7 +1057,7 @@ function speakText(text) {
     if (selectedVoice) {
         utterance.voice = selectedVoice;
         utterance.lang = selectedVoice.lang;
-        console.log('🎙️ Voz seleccionada:', selectedVoice.name, `(${selectedVoice.lang})`);
+        dlog('🎙️ Voz seleccionada:', selectedVoice.name, `(${selectedVoice.lang})`);
     } else {
         console.warn('⚠️ No se encontró voz adecuada. Voces disponibles:', voices.length);
     }
@@ -1072,7 +1075,6 @@ function speakText(text) {
     
     utterance.onstart = () => {
         STATE.isSpeaking = true;
-        // console.log('🔇 TARS hablando - reconocimiento pausado');
         
         // Actualizar indicador visual
         const listeningMode = document.getElementById('listeningMode');
@@ -1084,7 +1086,6 @@ function speakText(text) {
     
     utterance.onend = () => {
         STATE.isSpeaking = false;
-        // console.log('🎤 TARS terminó - reconocimiento activo');
         
         // Restaurar indicador visual
         const listeningMode = document.getElementById('listeningMode');
@@ -1096,7 +1097,6 @@ function speakText(text) {
         // Limpiar el texto hablado después de 2 segundos para permitir conversaciones futuras
         setTimeout(() => {
             STATE.lastSpokenText = '';
-            // console.log('🧹 Buffer de voz limpiado');
         }, 2000);
     };
     
@@ -1106,7 +1106,7 @@ function speakText(text) {
         console.error('❌ Error en síntesis de voz:', event.error);
     };
     
-    console.log('📣 Iniciando síntesis de voz...');
+    dlog('📣 Iniciando síntesis de voz...');
     window.speechSynthesis.speak(utterance);
 }
 
@@ -1200,7 +1200,7 @@ function initSpeechRecognition() {
         STATE.isListening = true;
         elements.micBtn.classList.add('listening');
         elements.micBtn.innerHTML = '🔴';
-        console.log('Reconocimiento de voz iniciado');
+        dlog('Reconocimiento de voz iniciado');
     };
     
     STATE.recognition.onresult = (event) => {
@@ -1218,19 +1218,17 @@ function initSpeechRecognition() {
         
         // Log solo si es interesante (confianza alta)
         if (confidence > 0.8) {
-            console.log('🎤 Detectado:', transcript, `(${(confidence * 100).toFixed(0)}%)`);
+            dlog('🎤 Detectado:', transcript, `(${(confidence * 100).toFixed(0)}%)`);
         }
         
         // Ignorar transcripciones con baja confianza justo después de que TARS habló
         const timeSinceSpoke = Date.now() - (STATE.ignoreRecognitionUntil - 500);
         if (timeSinceSpoke < 1000 && confidence < 0.85) {
-            // console.log('🔇 Ignorado - baja confianza después de hablar TARS');
             return;
         }
         
         // IGNORAR si TARS está hablando o acaba de hablar
         if (STATE.isSpeaking || Date.now() < STATE.ignoreRecognitionUntil) {
-            // console.log('🔇 Ignorado - TARS está hablando');
             return;
         }
         
@@ -1255,7 +1253,7 @@ function initSpeechRecognition() {
             // (Cambiado: ahora comparamos contra transcriptWords.length en lugar de spokenWords.length)
             const matchPercentage = transcriptWords.length > 0 ? (matches / transcriptWords.length) : 0;
             if (matchPercentage > 0.6) {
-                console.log(`🔇 ECO: "${transcript.substring(0, 40)}..." (${(matchPercentage * 100).toFixed(0)}%)`);
+                dlog(`🔇 ECO: "${transcript.substring(0, 40)}..." (${(matchPercentage * 100).toFixed(0)}%)`);
                 return;
             }
         }
@@ -1274,7 +1272,6 @@ function initSpeechRecognition() {
         const shouldIgnore = ignorePatterns.some(pattern => pattern.test(lowerTranscript));
         
         if (shouldIgnore) {
-            // console.log('⏭️ Ignorando ruido/palabra corta:', transcript);
             return;
         }
         
@@ -1308,7 +1305,7 @@ function initSpeechRecognition() {
                 return;
             }
             
-            console.log('💬 TARS responderá a:', command);
+            dlog('💬 TARS responderá a:', command);
             elements.userInput.value = command;
             playBeep();
             
@@ -1318,7 +1315,6 @@ function initSpeechRecognition() {
             }, 300);
         } else {
             // TARS escucha pero no responde (silencio inteligente)
-            // console.log('👂 TARS escuchó pero no respondió:', transcript);
         }
     };
     
@@ -1327,7 +1323,7 @@ function initSpeechRecognition() {
         
         // Si es error de "no-speech" en modo continuo, reiniciar
         if (event.error === 'no-speech' && STATE.continuousListening) {
-            console.log('Reiniciando reconocimiento...');
+            dlog('Reiniciando reconocimiento...');
             return;
         }
         
@@ -1343,11 +1339,11 @@ function initSpeechRecognition() {
     };
     
     STATE.recognition.onend = () => {
-        console.log('Reconocimiento finalizado');
+        dlog('Reconocimiento finalizado');
         
         // Si el modo continuo está activo, reiniciar automáticamente
         if (STATE.continuousListening) {
-            console.log('Reiniciando escucha continua...');
+            dlog('Reiniciando escucha continua...');
             try {
                 STATE.recognition.start();
             } catch (e) {
@@ -1399,97 +1395,79 @@ function wordsToNumbers(text) {
     return result;
 }
 
+// Aplica un valor 0-100 a un slider de personalidad, su label y STATE,
+// y devuelve el mensaje a mostrar/hablar (o null si el valor es inválido)
+function applyPersonalitySlider(stateKey, value, slider, valueLabel, messageFn) {
+    if (value < 0 || value > 100) return null;
+
+    STATE[stateKey] = value;
+    if (slider) {
+        slider.value = value;
+        slider.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (valueLabel) {
+        valueLabel.textContent = value + '%';
+    }
+    return messageFn(value);
+}
+
 function handleVoiceCommand(command) {
     // Convertir números en palabras a dígitos
     const normalizedCommand = wordsToNumbers(command);
     const lowerCommand = normalizedCommand.toLowerCase();
-    
+
     // Comandos de sinceridad
     const honestyMatch = lowerCommand.match(/(?:cambia|pon|ajusta|configura)?\s*(?:la\s*)?(?:sinceridad|honestidad)\s*(?:al?\s*)?(\d+)\s*(?:%|por\s*ciento)?/i);
     if (honestyMatch) {
-        const value = parseInt(honestyMatch[1]);
-        if (value >= 0 && value <= 100) {
-            STATE.honesty = value;
-            if (elements.honestySlider) {
-                elements.honestySlider.value = value;
-                // Forzar actualización visual del slider
-                elements.honestySlider.dispatchEvent(new Event('input', { bubbles: true }));
-                console.log('✅ Slider sinceridad actualizado a:', value);
-            }
-            if (elements.honestyValue) {
-                elements.honestyValue.textContent = value + '%';
-            }
-            
-            // Mensaje visual y de voz
-            const message = `Sinceridad al ${value}%`;
+        const message = applyPersonalitySlider('honesty', parseInt(honestyMatch[1]),
+            elements.honestySlider, elements.honestyValue,
+            (value) => `Sinceridad al ${value}%`);
+        if (message) {
             addMessage('tars', message);
             speakText(message);
             return true;
         }
     }
-    
+
     // Comandos de humor
     const humorMatch = lowerCommand.match(/(?:cambia|pon|ajusta|configura)?\s*(?:el\s*)?humor\s*(?:al?\s*)?(\d+)\s*(?:%|por\s*ciento)?/i);
     if (humorMatch) {
-        const value = parseInt(humorMatch[1]);
-        if (value >= 0 && value <= 100) {
-            STATE.humor = value;
-            if (elements.humorSlider) {
-                elements.humorSlider.value = value;
-                // Forzar actualización visual del slider
-                elements.humorSlider.dispatchEvent(new Event('input', { bubbles: true }));
-                console.log('✅ Slider humor actualizado a:', value);
-            }
-            if (elements.humorValue) {
-                elements.humorValue.textContent = value + '%';
-            }
-            
-            // Mensaje visual y de voz
-            const message = `Humor al ${value}%`;
+        const message = applyPersonalitySlider('humor', parseInt(humorMatch[1]),
+            elements.humorSlider, elements.humorValue,
+            (value) => `Humor al ${value}%`);
+        if (message) {
             addMessage('tars', message);
             speakText(message);
             return true;
         }
     }
-    
+
     // Comandos de sarcasmo
     const sarcasmMatch = lowerCommand.match(/(?:cambia|pon|ajusta|configura)?\s*(?:el\s*)?sarcasmo\s*(?:al?\s*)?(\d+)\s*(?:%|por\s*ciento)?/i);
     if (sarcasmMatch) {
-        const value = parseInt(sarcasmMatch[1]);
-        if (value >= 0 && value <= 100) {
-            STATE.sarcasm = value;
-            if (elements.sarcasmSlider) {
-                elements.sarcasmSlider.value = value;
-                // Forzar actualización visual del slider
-                elements.sarcasmSlider.dispatchEvent(new Event('input', { bubbles: true }));
-                console.log('✅ Slider sarcasmo actualizado a:', value);
-            }
-            if (elements.sarcasmValue) {
-                elements.sarcasmValue.textContent = value + '%';
-            }
-            return `Sarcasmo ajustado al ${value}%. ${value > 80 ? 'Modo cínico activado.' : value > 50 ? 'Nivel óptimo de ironía.' : 'Modo serio.'}`;
+        const message = applyPersonalitySlider('sarcasm', parseInt(sarcasmMatch[1]),
+            elements.sarcasmSlider, elements.sarcasmValue,
+            (value) => `Sarcasmo ajustado al ${value}%. ${value > 80 ? 'Modo cínico activado.' : value > 50 ? 'Nivel óptimo de ironía.' : 'Modo serio.'}`);
+        if (message) {
+            addMessage('tars', message);
+            speakText(message);
+            return true;
         }
     }
-    
+
     // Comando: picante
     const spicyMatch = lowerCommand.match(/(?:cambia|pon|ajusta|configura)?\s*(?:el\s*)?(?:picante|nivel\s*picante)\s*(?:al?\s*)?(\d+)\s*(?:%|por\s*ciento)?/i);
     if (spicyMatch) {
-        const value = parseInt(spicyMatch[1]);
-        if (value >= 0 && value <= 100) {
-            STATE.spicy = value;
-            if (elements.spicySlider) {
-                elements.spicySlider.value = value;
-                // Forzar actualización visual del slider
-                elements.spicySlider.dispatchEvent(new Event('input', { bubbles: true }));
-                console.log('✅ Slider picante actualizado a:', value);
-            }
-            if (elements.spicyValue) {
-                elements.spicyValue.textContent = value + '%';
-            }
-            return `Nivel picante ajustado al ${value}%. ${value > 80 ? '🔥 ¡Fuego máximo!' : value > 50 ? '🌶️ Sabor intenso.' : '🥛 Suave y gentil.'}`;
+        const message = applyPersonalitySlider('spicy', parseInt(spicyMatch[1]),
+            elements.spicySlider, elements.spicyValue,
+            (value) => `Nivel picante ajustado al ${value}%. ${value > 80 ? '🔥 ¡Fuego máximo!' : value > 50 ? '🌶️ Sabor intenso.' : '🥛 Suave y gentil.'}`);
+        if (message) {
+            addMessage('tars', message);
+            speakText(message);
+            return true;
         }
     }
-    
+
     // Comandos de velocidad
     const speedMatch = lowerCommand.match(/(?:cambia|pon|ajusta|configura)?\s*(?:la\s*)?velocidad\s*(?:a\s*)?(lenta|normal|rápida)/i);
     if (speedMatch) {
@@ -1506,7 +1484,7 @@ function handleVoiceCommand(command) {
                 elements.speedSlider.value = speeds[speedName].value;
                 // Forzar actualización visual del slider
                 elements.speedSlider.dispatchEvent(new Event('input', { bubbles: true }));
-                console.log('✅ Slider velocidad actualizado a:', speeds[speedName].label);
+                dlog('✅ Slider velocidad actualizado a:', speeds[speedName].label);
             }
             if (elements.speedValue) {
                 elements.speedValue.textContent = speeds[speedName].label;
@@ -1743,7 +1721,7 @@ async function sendToGroq(userMessage, typingId, retryCount = 0) {
     const MAX_RETRIES = 2;
     
     try {
-        console.log('📤 Enviando:', userMessage, `(intento ${retryCount + 1})`);
+        dlog('📤 Enviando:', userMessage, `(intento ${retryCount + 1})`);
         
         // Agregar al historial solo la primera vez
         if (retryCount === 0) {
@@ -1794,7 +1772,7 @@ async function sendToGroq(userMessage, typingId, retryCount = 0) {
         
         clearTimeout(timeoutId);
         
-        console.log('Respuesta recibida, status:', response.status);
+        dlog('Respuesta recibida, status:', response.status);
         
         if (!response.ok) {
             let errorMsg = '';
@@ -1815,14 +1793,14 @@ async function sendToGroq(userMessage, typingId, retryCount = 0) {
         }
         
         const data = await response.json();
-        console.log('Data recibida:', data);
+        dlog('Data recibida:', data);
         
         if (!data.choices || !data.choices[0] || !data.choices[0].message) {
             throw new Error('Respuesta inválida de la API');
         }
         
         const assistantMessage = data.choices[0].message.content;
-        console.log('Mensaje de TARS:', assistantMessage);
+        dlog('Mensaje de TARS:', assistantMessage);
         
         // Agregar respuesta al historial
         const now = new Date();
@@ -1862,7 +1840,7 @@ async function sendToGroq(userMessage, typingId, retryCount = 0) {
         
         // Verificar si podemos reintentar
         if (retryCount < MAX_RETRIES && (error.name === 'AbortError' || error.message.includes('Failed to fetch'))) {
-            console.log(`🔄 Reintentando... (${retryCount + 1}/${MAX_RETRIES})`);
+            dlog(`🔄 Reintentando... (${retryCount + 1}/${MAX_RETRIES})`);
             updateMessage(typingId, `TARS reintentando... (${retryCount + 1}/${MAX_RETRIES})`);
             
             // Esperar 1 segundo antes de reintentar
@@ -1998,8 +1976,8 @@ function handleSaveApiKey() {
     checkApiStatus();
     closeConfigModal();
     
-    addMessage('system', '✅ API key configurada y encriptada correctamente. ¡TARS está listo!');
-    console.log('🔒 API key almacenada con encriptación XOR + Base64');
+    addMessage('system', '✅ API key configurada. ¡TARS está listo!');
+    dlog('🔒 API key ofuscada con XOR + Base64 (no es cifrado real, solo evita texto plano en localStorage)');
 }
 
 function checkApiStatus() {
@@ -2097,7 +2075,7 @@ function canMakeApiCall() {
     // Cooldown de 3 segundos entre llamadas
     if (timeSinceLastCall < STATE.apiCallCooldown) {
         const waitTime = Math.ceil((STATE.apiCallCooldown - timeSinceLastCall) / 1000);
-        console.log(`⏳ Espera ${waitTime}s antes de la siguiente pregunta`);
+        dlog(`⏳ Espera ${waitTime}s antes de la siguiente pregunta`);
         return false;
     }
     
@@ -2276,7 +2254,7 @@ function detectUserName(userMessage, tarsResponse) {
                 localStorage.setItem('tars_user_name', name);
                 localStorage.setItem('tars_meeting_time', STATE.userMeetingTime);
                 
-                console.log('✅ Nombre de usuario guardado:', name);
+                dlog('✅ Nombre de usuario guardado:', name);
                 updateUserDisplay();
                 
                 // Mensaje diferente si es cambio de nombre
