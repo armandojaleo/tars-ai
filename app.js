@@ -148,9 +148,11 @@ const CONFIG = {
     apiKey: loadApiKey(),
     apiEndpoint: 'https://api.groq.com/openai/v1/chat/completions',
     // Modelos disponibles (ordenados de más rápido/simple a más potente):
-    // 'llama-3.1-8b-instant'    - MÁS RÁPIDO, menos tokens, respuestas simples
-    // 'llama-3.3-70b-versatile' - MÁS INTELIGENTE, más tokens, respuestas complejas
-    model: 'llama-3.3-70b-versatile',  // llama-3.1-8b-instant fue retirado por Groq
+    // Los modelos Llama (llama-3.1-8b-instant, llama-3.3-70b-versatile) fueron
+    // retirados por Groq en agosto de 2026; usar los reemplazos oficiales de OpenAI OSS:
+    // 'openai/gpt-oss-20b'  - MÁS RÁPIDO, menos tokens, respuestas simples
+    // 'openai/gpt-oss-120b' - MÁS INTELIGENTE, más tokens, respuestas complejas
+    model: 'openai/gpt-oss-20b',
     maxTokens: 150 // Respuestas MUY cortas
 };
 
