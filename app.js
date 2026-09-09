@@ -153,7 +153,9 @@ const CONFIG = {
     // 'openai/gpt-oss-20b'  - MÁS RÁPIDO, menos tokens, respuestas simples
     // 'openai/gpt-oss-120b' - MÁS INTELIGENTE, más tokens, respuestas complejas
     model: 'openai/gpt-oss-20b',
-    maxTokens: 300 // Respuestas cortas (150 se quedaba corto y cortaba frases a mitad)
+    // gpt-oss consume parte de max_tokens en razonamiento interno antes de
+    // escribir la respuesta visible; con reasoning_effort:'low' 400 alcanza
+    maxTokens: 400
 };
 
 const STATE = {
@@ -1767,7 +1769,8 @@ async function sendToGroq(userMessage, typingId, retryCount = 0) {
                 model: CONFIG.model,
                 messages: messages,
                 temperature: 0.8,
-                max_tokens: CONFIG.maxTokens
+                max_tokens: CONFIG.maxTokens,
+                reasoning_effort: 'low'
             }),
             signal: controller.signal
         });
