@@ -153,7 +153,7 @@ const CONFIG = {
     // 'openai/gpt-oss-20b'  - MÁS RÁPIDO, menos tokens, respuestas simples
     // 'openai/gpt-oss-120b' - MÁS INTELIGENTE, más tokens, respuestas complejas
     model: 'openai/gpt-oss-20b',
-    maxTokens: 150 // Respuestas MUY cortas
+    maxTokens: 300 // Respuestas cortas (150 se quedaba corto y cortaba frases a mitad)
 };
 
 const STATE = {

@@ -29,7 +29,7 @@ body {
 }
 
 .container {
-    max-width: 1400px;
+    max-width: 1900px;
     height: calc(100vh - 20px);
     margin: 0 auto;
     background: var(--bg-secondary);
@@ -373,6 +373,40 @@ body {
     flex-direction: column;
     gap: 15px;
     overflow-y: auto;
+}
+
+/* En pantallas anchas, distribuir el panel de control en columnas
+   para que todo el contenido quepa sin necesidad de scroll interno */
+@media (min-width: 1300px) {
+    .main-panel {
+        grid-template-columns: 1.3fr 1fr;
+    }
+
+    .control-panel {
+        overflow-y: visible;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        align-content: start;
+        gap: 12px 15px;
+    }
+
+    .control-panel .toggles-row {
+        grid-column: 1 / 3;
+        margin: 0;
+    }
+
+    .control-panel .settings-group.compact {
+        grid-column: 1;
+    }
+
+    .control-panel .quick-actions {
+        grid-column: 2;
+    }
+
+    .quick-actions .action-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 .settings-group {
